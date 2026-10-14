@@ -14,7 +14,7 @@
   <title>AICS Dining Report</title>
   <style>
     :root {
-      color-scheme: light;
+      color-scheme: dark;
       --navy: #171b2f;
       --blue: #365fa0;
       --blue-fill: #488acc;
@@ -23,16 +23,16 @@
       --muted: #66718b;
     }
     * { box-sizing: border-box; }
-    html, body { margin: 0; width: 100%; height: 100%; min-height: 100%; background: #fff; }
+    html, body { margin: 0; width: 100%; height: 100%; min-height: 100%; background: #0b1220; }
     body { font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
-    .app { position: fixed; inset: 0; background: #fff; overflow: hidden; }
+    .app { position: fixed; inset: 0; background: #0b1220; overflow: hidden; }
     #dining-app { position: absolute; inset: 0; border: 0; width: 100%; height: 100%; background: #fff; }
     .loading {
       position: fixed; inset: 0; z-index: 5;
       display: flex; align-items: center; justify-content: center;
       width: 100%; min-height: 100%; min-height: 100dvh;
       padding: max(20px, env(safe-area-inset-top)) 18px max(20px, env(safe-area-inset-bottom));
-      background: radial-gradient(ellipse at center, #fff 0%, #fff 62%, #fff7fb 100%);
+      background: radial-gradient(ellipse at center, #18243a 0%, #0f192b 58%, #0b1220 100%);
       opacity: 1; visibility: visible;
       transition: opacity .45s ease, visibility .45s ease;
     }
@@ -46,7 +46,7 @@
       display: block; width: clamp(56px, 17vw, 88px); height: auto;
       aspect-ratio: 1; object-fit: contain; margin: 0 auto clamp(16px, 4vh, 26px);
       animation: logo-float 3s ease-in-out infinite;
-      filter: drop-shadow(0 8px 16px rgba(54,95,160,.14));
+      filter: drop-shadow(0 8px 20px rgba(72,138,204,.22));
     }
     .animated-text {
       width: 100%; height: clamp(62px, 18vw, 110px);
@@ -81,9 +81,9 @@
       background:#d8e3f7; border-radius:50%; transform-origin:50% calc(100% + 10px);
       animation: s7 1s infinite linear;
     }
-    .status { color:#46516a; font-size:clamp(.88rem, 3.8vw, 1rem); line-height:1.5; margin: clamp(16px, 3vh, 22px) 0 0; }
-    .substatus { color:#8992a8; font-size:clamp(.62rem, 2.8vw, .72rem); letter-spacing:clamp(.1em, 1.3vw, .24em); margin:10px 0 0; }
-    .retry { display:none; margin:20px auto 0; border:0; border-radius:999px; background:var(--navy); color:white; font:inherit; font-size:.9rem; padding:11px 20px; cursor:pointer; }
+    .status { color:#e2e8f0; font-size:clamp(.88rem, 3.8vw, 1rem); line-height:1.5; margin: clamp(16px, 3vh, 22px) 0 0; }
+    .substatus { color:#9fb0ca; font-size:clamp(.62rem, 2.8vw, .72rem); letter-spacing:clamp(.1em, 1.3vw, .24em); margin:10px 0 0; }
+    .retry { display:none; margin:20px auto 0; border:1px solid rgba(147,197,253,.28); border-radius:999px; background:#365fa0; color:white; font:inherit; font-size:.9rem; padding:11px 20px; cursor:pointer; }
     .loading.slow .retry { display:inline-block; }
     @keyframes stroke-draw {
       0% { fill:rgba(72,138,204,0); stroke:rgba(54,95,160,1); stroke-dashoffset:25%; stroke-dasharray:0 50%; stroke-width:2; }
