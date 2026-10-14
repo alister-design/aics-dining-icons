@@ -13,24 +13,161 @@
   <link rel="apple-touch-icon" href="./aics-icon-512.png">
   <title>AICS Dining Report</title>
   <style>
-    :root { color-scheme: dark; }
+    :root {
+      color-scheme: light;
+      --navy: #171b2f;
+      --blue: #365fa0;
+      --blue-fill: #488acc;
+      --pink: #d94f88;
+      --pink-soft: #f8dfeb;
+      --muted: #66718b;
+    }
     * { box-sizing: border-box; }
-    html, body { margin: 0; width: 100%; height: 100%; background: #171b2f; }
+    html, body { margin: 0; width: 100%; height: 100%; min-height: 100%; background: #fff; }
     body { font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
-    main { position: fixed; inset: 0; background: #171b2f; }
-    iframe { border: 0; display: block; width: 100%; height: 100%; background: #fff; }
+    .app { position: fixed; inset: 0; background: #fff; overflow: hidden; }
+    #dining-app { position: absolute; inset: 0; border: 0; width: 100%; height: 100%; background: #fff; }
+    .loading {
+      position: fixed; inset: 0; z-index: 5;
+      display: flex; align-items: center; justify-content: center;
+      width: 100%; min-height: 100%; min-height: 100dvh;
+      padding: max(20px, env(safe-area-inset-top)) 18px max(20px, env(safe-area-inset-bottom));
+      background: radial-gradient(ellipse at center, #fff 0%, #fff 62%, #fff7fb 100%);
+      opacity: 1; visibility: visible;
+      transition: opacity .45s ease, visibility .45s ease;
+    }
+    .loading.is-hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+    .content {
+      width: min(100%, 520px); margin: auto; text-align: center;
+      display: flex; flex-direction: column; align-items: center;
+      transform: translateY(-1vh);
+    }
+    .brand-mark {
+      display: block; width: clamp(56px, 17vw, 88px); height: auto;
+      aspect-ratio: 1; object-fit: contain; margin: 0 auto clamp(16px, 4vh, 26px);
+      animation: logo-float 3s ease-in-out infinite;
+      filter: drop-shadow(0 8px 16px rgba(54,95,160,.14));
+    }
+    .animated-text {
+      width: 100%; height: clamp(62px, 18vw, 110px);
+      display: flex; align-items: center; justify-content: center;
+      overflow: visible; margin: 0;
+    }
+    .animated-text svg { display: block; width: 100%; height: 100%; overflow: visible; }
+    .animated-text text {
+      font-family: "Stylish", Georgia, serif;
+      font-size: 100px;
+      font-weight: 700;
+      text-anchor: middle;
+      dominant-baseline: middle;
+      stroke: var(--blue);
+      stroke-width: 1.8;
+      stroke-linejoin: round;
+      paint-order: stroke fill;
+      fill: rgba(72,138,204,0);
+      stroke-dasharray: 0 50%;
+      stroke-dashoffset: 25%;
+      animation: stroke-draw 3.8s ease-in-out infinite alternate;
+    }
+.custom-loader {
+      flex: 0 0 auto; width: clamp(48px, 14vw, 70px); height: clamp(48px, 14vw, 70px);
+      background:
+        radial-gradient(farthest-side, #365fa0 90%, #0000) center/16px 16px,
+        radial-gradient(farthest-side, #6f86b5 90%, #0000) bottom/12px 12px;
+      background-repeat: no-repeat; animation: s7 1.7s infinite linear; position: relative;
+    }
+    .custom-loader::before {
+      content:""; position:absolute; width:8px; height:8px; inset:auto 0 16px; margin:auto;
+      background:#d8e3f7; border-radius:50%; transform-origin:50% calc(100% + 10px);
+      animation: s7 1s infinite linear;
+    }
+    .status { color:#46516a; font-size:clamp(.88rem, 3.8vw, 1rem); line-height:1.5; margin: clamp(16px, 3vh, 22px) 0 0; }
+    .substatus { color:#8992a8; font-size:clamp(.62rem, 2.8vw, .72rem); letter-spacing:clamp(.1em, 1.3vw, .24em); margin:10px 0 0; }
+    .retry { display:none; margin:20px auto 0; border:0; border-radius:999px; background:var(--navy); color:white; font:inherit; font-size:.9rem; padding:11px 20px; cursor:pointer; }
+    .loading.slow .retry { display:inline-block; }
+    @keyframes stroke-draw {
+      0% { fill:rgba(72,138,204,0); stroke:rgba(54,95,160,1); stroke-dashoffset:25%; stroke-dasharray:0 50%; stroke-width:2; }
+      65% { fill:rgba(72,138,204,0); stroke:rgba(54,95,160,1); }
+      82% { fill:rgba(72,138,204,0); stroke:rgba(54,95,160,1); stroke-width:2.5; }
+      100% { fill:rgba(72,138,204,1); stroke:rgba(54,95,160,0); stroke-dashoffset:-25%; stroke-dasharray:50% 0; stroke-width:0; }
+    }
+    @keyframes s7 { 100% { transform:rotate(1turn); } }
+    @keyframes logo-float { 0%,100% { transform:translateY(0); } 50% { transform:translateY(-5px); } }
+100% { transform:rotate(360deg); } }
+    @media (max-width:360px) {
+      .loading { padding-left:12px; padding-right:12px; }
+      .animated-text { height:58px; }
+      .animated-text text { stroke-width:2.2; }
+}
+    @media (max-height:560px) and (orientation:landscape) {
+      .content { transform:none; }
+      .brand-mark { width:44px; margin-bottom:8px; }
+      .animated-text { height:48px; }
+.custom-loader { width:38px; height:38px; }
+      .status { margin-top:10px; }
+      .substatus { margin-top:4px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration:.01ms !important; animation-iteration-count:1 !important; transition-duration:.01ms !important; }
+    }
   </style>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Stylish&display=swap" rel="stylesheet">
 </head>
 <body>
-  <main>
+  <main class="app">
     <iframe id="dining-app" title="AICS Dining Report" src="https://script.google.com/macros/s/AKfycbyV_RLvPmE_cTT6iD_7AlB10OspRSibzRU0B0ZftDH-FwtPSzWuo5n3fHiDCMRJqw/exec" allow="clipboard-read; clipboard-write" referrerpolicy="strict-origin-when-cross-origin"></iframe>
+    <section id="loading" class="loading" role="status" aria-live="polite">
+      <div class="content">
+        <img class="brand-mark" src="./aics-icon-192.png" alt="AICS logo">
+        <div class="animated-text" aria-label="AICS Dining Report">
+          <svg viewBox="0 0 1000 120" role="img" aria-hidden="true" preserveAspectRatio="xMidYMid meet">
+            <text x="500" y="62" textLength="950" lengthAdjust="spacingAndGlyphs">AICS DINING REPORT</text>
+          </svg>
+        </div>
+        <div class="custom-loader" aria-hidden="true"></div>
+        <p class="status">Loading the reporting system...</p>
+        <p class="substatus" id="substatus">PLEASE WAIT A MOMENT</p>
+        <button id="retry" class="retry" type="button">Reconnect</button>
+      </div>
+    </section>
   </main>
   <script>
-    // Keep the PWA shell installable. The dining report itself requires internet.
+    const frame = document.getElementById('dining-app');
+    const loading = document.getElementById('loading');
+    const substatus = document.getElementById('substatus');
+    const retry = document.getElementById('retry');
+    let hidden = false;
+    let slowTimer;
+    function hideLoader() {
+      if (hidden) return;
+      hidden = true;
+      clearTimeout(slowTimer);
+      loading.classList.add('is-hidden');
+    }
+    frame.addEventListener('load', () => setTimeout(hideLoader, 700));
+    slowTimer = setTimeout(() => {
+      if (!hidden) {
+        loading.classList.add('slow');
+        substatus.textContent = 'THIS IS TAKING LONGER THAN USUAL';
+      }
+    }, 12000);
+    retry.addEventListener('click', () => {
+      hidden = false;
+      loading.classList.remove('is-hidden','slow');
+      substatus.textContent = 'RECONNECTING…';
+      frame.src = frame.src;
+      clearTimeout(slowTimer);
+      slowTimer = setTimeout(() => {
+        if (!hidden) {
+          loading.classList.add('slow');
+          substatus.textContent = 'CHECK YOUR INTERNET CONNECTION';
+        }
+      }, 12000);
+    });
     if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js').catch(err => console.warn('PWA service worker registration failed:', err));
-      });
+      window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js').catch(err => console.warn('PWA service worker registration failed:', err)));
     }
   </script>
 </body>
