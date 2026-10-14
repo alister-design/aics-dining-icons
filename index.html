@@ -13,43 +13,23 @@
   <link rel="apple-touch-icon" href="./aics-icon-512.png">
   <title>AICS Dining Report</title>
   <style>
-    :root { color-scheme: dark; --navy: #171b2f; --gold: #e5c27b; }
+    :root { color-scheme: dark; }
     * { box-sizing: border-box; }
-    html, body { margin: 0; width: 100%; height: 100%; background: var(--navy); }
+    html, body { margin: 0; width: 100%; height: 100%; background: #171b2f; }
     body { font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
-    .app { position: fixed; inset: 0; display: flex; flex-direction: column; }
-    .loading { position: absolute; z-index: 2; inset: 0; display: grid; place-items: center; padding: 24px;
-      background: var(--navy); color: white; text-align: center; transition: opacity .25s ease; }
-    .loading-inner { max-width: 360px; }
-    .loading img { width: 76px; height: 76px; object-fit: contain; margin-bottom: 14px; }
-    .loading h1 { font-size: 1.15rem; margin: 0 0 8px; }
-    .loading p { font-size: .92rem; line-height: 1.45; margin: 0; color: #d8dbea; }
-    iframe { border: 0; display: block; width: 100%; height: 100%; background: white; }
-    .offline { display: none; color: white; padding: 28px; text-align: center; }
-    @media (display-mode: standalone) { body { overscroll-behavior: none; } }
+    main { position: fixed; inset: 0; background: #171b2f; }
+    iframe { border: 0; display: block; width: 100%; height: 100%; background: #fff; }
   </style>
 </head>
 <body>
-  <main class="app">
-    <div id="loading" class="loading" role="status" aria-live="polite">
-      <div class="loading-inner">
-        <img src="./aics-icon-192.png" alt="">
-        <h1>AICS Dining Report</h1>
-        <p>Opening the dining report… Please wait while the secure reporting system loads.</p>
-      </div>
-    </div>
+  <main>
     <iframe id="dining-app" title="AICS Dining Report" src="https://script.google.com/macros/s/AKfycbyV_RLvPmE_cTT6iD_7AlB10OspRSibzRU0B0ZftDH-FwtPSzWuo5n3fHiDCMRJqw/exec" allow="clipboard-read; clipboard-write" referrerpolicy="strict-origin-when-cross-origin"></iframe>
   </main>
   <script>
-    const frame = document.getElementById('dining-app');
-    const loading = document.getElementById('loading');
-    frame.addEventListener('load', () => {
-      loading.style.opacity = '0';
-      setTimeout(() => { loading.style.display = 'none'; }, 300);
-    });
+    // Keep the PWA shell installable. The dining report itself requires internet.
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js').catch(err => console.warn('PWA offline shell unavailable:', err));
+        navigator.serviceWorker.register('./sw.js').catch(err => console.warn('PWA service worker registration failed:', err));
       });
     }
   </script>
