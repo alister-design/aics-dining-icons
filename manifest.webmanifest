@@ -1,0 +1,26 @@
+{
+  "id": "./",
+  "name": "AICS Dining Report",
+  "short_name": "AICS Dining",
+  "description": "AICS student morning and evening dining report",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#171b2f",
+  "theme_color": "#171b2f",
+  "icons": [
+    {
+      "src": "./aics-icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./aics-icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}
