@@ -1,10 +1,11 @@
-const CACHE_NAME = 'aics-dining-pwa-shell-v1';
+const CACHE_NAME = 'aics-dining-pwa-shell-transparent-v2';
 const SHELL_FILES = [
   './',
   './index.html',
   './manifest.webmanifest',
   './aics-icon-192.png',
-  './aics-icon-512.png'
+  './aics-icon-512.png',
+  './aics-logo-transparent-1024.png'
 ];
 
 self.addEventListener('install', event => {
@@ -13,7 +14,7 @@ self.addEventListener('install', event => {
 
 self.addEventListener('activate', event => {
   event.waitUntil(
-    caches.keys().then(keys => Promise.all(keys.filter(key => key !== CACHE_NAME).map(key => caches.delete(key))))
+    caches.keys().then(keys => Promise.all(keys.filter(key => key.startsWith('aics-dining-pwa-shell-') && key !== CACHE_NAME).map(key => caches.delete(key))))
       .then(() => self.clients.claim())
   );
 });
